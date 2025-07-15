@@ -20,6 +20,9 @@ Rational Rational::operator+(const Rational& other) const {
 }
 
 Rational Rational::operator-() const {
+    if (m_numerator == LLONG_MIN) {
+        throw std::overflow_error("Result numerator out of long long range.");
+    }
     return Rational(-m_numerator, m_denominator);
 }
 
