@@ -22,3 +22,6 @@ add_executable(
     src/rational_comparison.cpp
     src/rational_io.cpp
 )
+
+# 헤더 파일 경로 추가
+target_include_directories(rational_system_test PUBLIC src)

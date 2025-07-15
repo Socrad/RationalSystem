@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <functional> // For std::function
-#include <climits>    // For LLONG_MAX
+#include <climits>    // For LLONG_MIN, LLONG_MAX
 #include <sstream>    // For std::stringstream
 #include <limits>     // For std::numeric_limits
 #include "rational.h"
@@ -49,6 +49,18 @@ void run_simple_tests() {
     std::cout << r3 << " + " << r4 << " = " << sum2 << std::endl;
 }
 
+void run_parser_tests() {
+    std::cout << "\n--- Running Parser Tests ---" << std::endl;
+    test("Parser: with spaces", Rational(" 1 / 2 "), Rational(1, 2));
+    test("Parser: negative with spaces", Rational(" - 3 / 4 "), Rational(-3, 4));
+    test("Parser: integer with spaces", Rational("  -5  "), Rational(-5));
+    test_exception("Parser: invalid string", [](){ Rational r("abc"); });
+    test_exception("Parser: invalid format", [](){ Rational r("1 / / 2"); });
+    test_exception("Parser: denominator is zero", [](){ Rational r("1/0"); });
+    // Note: LLONG_MAX is 9223372036854775807
+    test_exception("Parser: out of range", [](){ Rational r("9223372036854775808"); });
+}
+
 void run_edge_case_tests() {
     std::cout << "\n--- Running Arithmetic Edge Case Tests ---" << std::endl;
     Rational r_half(1, 2);
@@ -59,6 +71,26 @@ void run_edge_case_tests() {
     test("Multiply by zero", r_half * r_zero, r_zero);
     test("Multiply by one", r_half * r_one, r_half);
     test_exception("Divide by zero", [&]() { Rational result = r_half / r_zero; });
+
+    // Reduction tests
+    test("Reduction: negative denominator", Rational(2, -4), Rational(-1, 2));
+    test("Reduction: zero numerator", Rational(0, 5), Rational(0, 1));
+    
+    std::cout << "\n--- Running Overflow and Limit Tests ---" << std::endl;
+    // Unary minus
+    Rational r_llong_min(LLONG_MIN, 1);
+    test_exception("Negation of LLONG_MIN", [&](){ -r_llong_min; });
+
+    // Addition
+    Rational r_llong_max(LLONG_MAX, 1);
+    test_exception("Addition overflow", [&](){ r_llong_max + r_one; });
+
+    // Subtraction
+    test_exception("Subtraction overflow", [&](){ r_llong_min - r_one; });
+
+    // Multiplication
+    Rational r_llong_max_div_2(LLONG_MAX / 2, 1);
+    test_exception("Multiplication overflow", [&](){ r_llong_max_div_2 * r_two + r_two; });
 }
 
 void run_comparison_tests() {
@@ -110,6 +142,7 @@ void run_interactive_io_test() {
 
 int main() {
     run_simple_tests();
+    run_parser_tests();
     run_edge_case_tests();
     run_comparison_tests();
     run_io_tests();

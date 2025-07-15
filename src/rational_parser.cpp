@@ -2,6 +2,7 @@
 #include "rational.h"
 #include <stdexcept>
 #include <string>
+#include <algorithm>
 
 std::pair<long long, long long> Rational::parse(const std::string& num_str) {
     enum class ParsingState {
@@ -11,6 +12,8 @@ std::pair<long long, long long> Rational::parse(const std::string& num_str) {
         CHECK_DENOMINATOR
     };
 
+    std::string space_removed = num_str;
+    space_removed.erase(std::remove(space_removed.begin(), space_removed.end(), ' '), space_removed.end());
     ParsingState state = ParsingState::CHECK_SIGN;
     int sign = 1, sign_denominator = 1;
     int fractional_length = 0;
@@ -19,7 +22,7 @@ std::pair<long long, long long> Rational::parse(const std::string& num_str) {
     long long numerator = 0, denominator = 1;
 
     try {
-        for (char c : num_str) {
+        for (char c : space_removed) {
             switch (state)
             {
             case ParsingState::CHECK_SIGN:
