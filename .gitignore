@@ -1,0 +1,18 @@
+# 빌드 과정에서 생성되는 파일 및 디렉토리
+
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CMakeFiles/
+rational_system_test
+build/
+*.o
+*.exe
+*.obj
+*.out
+# 운영체제 및 IDE 관련 파일
+.DS_Store
+*.swp
+.vscode/
+*.code-workspace
+GEMINI.MD
