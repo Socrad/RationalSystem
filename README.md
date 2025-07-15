@@ -96,7 +96,6 @@ This project was developed in collaboration with Google's Gemini. Gemini served 
 ## License
 
 Distributed under the MIT License. See [LICENSE](./LICENSE) for more information.
-```
 
 
 
