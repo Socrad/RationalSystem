@@ -36,17 +36,25 @@ void test_exception(const std::string& test_name, std::function<void()> test_fun
     }
 }
 
-void run_simple_tests() {
-    std::cout << "--- Running Simple Tests ---" << std::endl;
-    Rational r1(1, 2);
-    Rational r2(1, 3);
-    Rational sum = r1 + r2;
-    std::cout << r1 << " + " << r2 << " = " << sum << std::endl;
+void run_arithmetic_tests() {
+    std::cout << "\n--- Running Comprehensive Arithmetic Tests ---" << std::endl;
+    // Positive numbers
+    test("Add: 1/2 + 1/3", Rational(1, 2) + Rational(1, 3), Rational(5, 6));
+    test("Subtract: 1/2 - 1/3", Rational(1, 2) - Rational(1, 3), Rational(1, 6));
+    test("Multiply: 2/3 * 3/4", Rational(2, 3) * Rational(3, 4), Rational(1, 2));
+    test("Divide: 1/2 / 3/4", Rational(1, 2) / Rational(3, 4), Rational(2, 3));
 
-    Rational r3(2);
-    Rational r4(1, 4);
-    Rational sum2 = r3 + r4;
-    std::cout << r3 << " + " << r4 << " = " << sum2 << std::endl;
+    // Involving negative numbers
+    test("Add: 1/2 + (-1/3)", Rational(1, 2) + Rational(-1, 3), Rational(1, 6));
+    test("Subtract: -1/2 - 1/3", Rational(-1, 2) - Rational(1, 3), Rational(-5, 6));
+    test("Multiply: -1/2 * 1/3", Rational(-1, 2) * Rational(1, 3), Rational(-1, 6));
+    test("Divide: -1/2 / -1/3", Rational(-1, 2) / Rational(-1, 3), Rational(3, 2));
+
+    // Resulting in zero or integers
+    test("Add to zero", Rational(1, 2) + Rational(-1, 2), Rational(0, 1));
+    test("Subtract to zero", Rational(1, 3) - Rational(1, 3), Rational(0, 1));
+    test("Multiply to integer", Rational(3, 2) * Rational(2, 1), Rational(3, 1));
+    test("Divide to integer", Rational(1, 2) / Rational(1, 4), Rational(2, 1));
 }
 
 void run_parser_tests() {
@@ -63,14 +71,11 @@ void run_parser_tests() {
 
 void run_edge_case_tests() {
     std::cout << "\n--- Running Arithmetic Edge Case Tests ---" << std::endl;
-    Rational r_half(1, 2);
-    Rational r_neg_half(-1, 2);
-    Rational r_two(2, 1);
     Rational r_zero(0, 1);
     Rational r_one(1, 1);
-    test("Multiply by zero", r_half * r_zero, r_zero);
-    test("Multiply by one", r_half * r_one, r_half);
-    test_exception("Divide by zero", [&]() { Rational result = r_half / r_zero; });
+    test("Multiply by zero", Rational(1, 2) * r_zero, r_zero);
+    test("Multiply by one", Rational(1, 2) * r_one, Rational(1, 2));
+    test_exception("Divide by zero", [&]() { Rational result = Rational(1, 2) / r_zero; });
 
     // Reduction tests
     test("Reduction: negative denominator", Rational(2, -4), Rational(-1, 2));
@@ -89,16 +94,37 @@ void run_edge_case_tests() {
     test_exception("Subtraction overflow", [&](){ r_llong_min - r_one; });
 
     // Multiplication
-    Rational r_llong_max_div_2(LLONG_MAX / 2, 1);
-    test_exception("Multiplication overflow", [&](){ r_llong_max_div_2 * r_two + r_two; });
+    test_exception("Multiplication overflow", [&](){ Rational(LLONG_MAX, 1) * Rational(2, 1); });
 }
 
 void run_comparison_tests() {
-    std::cout << "\n--- Running Comparison Tests ---" << std::endl;
-    Rational r_half(1, 2);
-    Rational r_another_half(2, 4);
-    test_bool("Eq: equivalent", r_half == r_another_half, true);
-    test_bool("Neq: equivalent", r_half != r_another_half, false);
+    std::cout << "\n--- Running Comprehensive Comparison Tests ---" << std::endl;
+    // Equality
+    test_bool("Eq: 1/2 == 2/4", Rational(1, 2) == Rational(2, 4), true);
+    test_bool("Neq: 1/2 != 1/3", Rational(1, 2) != Rational(1, 3), true);
+
+    // Less than / Greater than
+    test_bool("LT: 1/5 < 2/5", Rational(1, 5) < Rational(2, 5), true);
+    test_bool("GT: 1/4 > 1/5", Rational(1, 4) > Rational(1, 5), true);
+    test_bool("LT: 2/3 < 3/4", Rational(2, 3) < Rational(3, 4), true);
+    test_bool("LT: -1/2 < 1/100", Rational(-1, 2) < Rational(1, 100), true);
+    test_bool("LT: -1/2 < -1/3", Rational(-1, 2) < Rational(-1, 3), true);
+    test_bool("GT: -1/3 > -1/2", Rational(-1, 3) > Rational(-1, 2), true);
+    
+    // Less than or equal to / Greater than or equal to
+    test_bool("LE: 1/2 <= 1/2", Rational(1, 2) <= Rational(1, 2), true);
+    test_bool("GE: 1/2 >= 1/2", Rational(1, 2) >= Rational(1, 2), true);
+    test_bool("LE: 1/3 <= 1/2", Rational(1, 3) <= Rational(1, 2), true);
+    test_bool("GE: 1/2 >= 1/3", Rational(1, 2) >= Rational(1, 3), true);
+
+    // Comparison with zero
+    test_bool("LT: -1/10 < 0", Rational(-1, 10) < Rational(0), true);
+    test_bool("GT: 1/10 > 0", Rational(1, 10) > Rational(0), true);
+    test_bool("EQ: 0 == 0", Rational(0) == Rational(0, 10), true);
+
+    // Comparison with integers
+    test_bool("LT: 5/2 < 3", Rational(5, 2) < Rational(3), true);
+    test_bool("GT: 5/2 > 2", Rational(5, 2) > Rational(2), true);
 }
 
 void run_io_tests() {
@@ -141,7 +167,7 @@ void run_interactive_io_test() {
 }
 
 int main() {
-    run_simple_tests();
+    run_arithmetic_tests();
     run_parser_tests();
     run_edge_case_tests();
     run_comparison_tests();
