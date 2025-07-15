@@ -1,6 +1,6 @@
 # RationalSystem
 
-A C++17 class for handling rational numbers.
+C++17 class for handling rational numbers.
 
 ## About The Project
 
