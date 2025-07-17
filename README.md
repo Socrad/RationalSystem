@@ -40,6 +40,13 @@ This project is a library, not a standalone application. To use the `Rational` c
 
 The `examples/test_suite.cpp` file is not part of the library but serves as a comprehensive example and test suite. You can build and run it to see the library in action and verify its functionality.
 
+## calculator_main.cpp
+
+The `calculator_main.cpp` file is a standalone executable that performs rational number operations using the `Rational` class. It takes two rational numbers and an operator as command-line arguments, performs the specified operation, and outputs the result. This executable is designed to be invoked by a separately implemented Model Context Protocol (MCP) server for integration with large language model (LLM) applications.
+
+### Command-Line Usage
+The executable expects three command-line arguments:
+
 ### Prerequisites
 
 *   A C++17 compatible compiler (e.g., GCC, Clang, MSVC)
