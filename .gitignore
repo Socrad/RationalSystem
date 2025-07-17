@@ -6,6 +6,7 @@ Makefile
 CMakeFiles/
 rational_system_test
 build/
+rational_calculator
 *.o
 *.exe
 *.obj
